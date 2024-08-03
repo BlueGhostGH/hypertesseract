@@ -1,14 +1,23 @@
+use std::{borrow, ffi};
+
 use crate::thin;
 
+// NOTE: Gotta hide the combinatorial explosion..
+mod explosion;
+
 // Tuple goes as follows:
-// [0] - assume_numeric
+// [0] - assume_numeric_input
+// [1] - whitelist
 #[derive(Debug)]
-struct Builder<Fields = ((),)>
+struct Builder<Fields = ((), ())>
 {
     fields: Fields,
 }
 
-fn build(assume_numeric_input: bool) -> Result<crate::Tesseract, thin::Error>
+fn build(
+    assume_numeric_input: bool,
+    whitelist: Option<borrow::Cow<'_, ffi::CStr>>, // TODO: Maybe figure something better
+) -> Result<crate::Tesseract, crate::Error>
 {
     let mut thin_tess = crate::thin::Tesseract::create();
 
@@ -21,23 +30,14 @@ fn build(assume_numeric_input: bool) -> Result<crate::Tesseract, thin::Error>
         },
     )?;
 
+    if let Some(whitelist) = whitelist {
+        thin_tess
+            .set_variable(thin::variables::ASSUME_NUMERIC_INPUT, &whitelist)?
+    }
+
     Ok(crate::Tesseract {
         base_api: thin_tess,
     })
-}
-
-impl Builder<((),)>
-{
-    fn assume_numeric_input(self) -> Builder<(bool,)>
-    {
-        let Builder { fields: ((),) } = self;
-        Builder { fields: (true,) }
-    }
-
-    fn build(self) -> Result<crate::Tesseract, thin::Error>
-    {
-        build(false)
-    }
 }
 
 mod constants

@@ -1,0 +1,7 @@
+[package]
+name = "tesseract"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tesseract-sys = "0.6.1"

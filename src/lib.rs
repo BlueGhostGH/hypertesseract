@@ -7,7 +7,13 @@ pub struct Tesseract
     base_api: thin::Tesseract,
 }
 
-impl Tesseract {}
+impl Tesseract
+{
+    pub fn builder() -> builder::Builder<((), ())>
+    {
+        builder::Builder::default()
+    }
+}
 
 #[derive(Debug)]
 pub(crate) enum Error
@@ -40,5 +46,23 @@ impl From<thin::Error> for Error
     fn from(thin_err: thin::Error) -> Self
     {
         Error::Thin(thin_err)
+    }
+}
+
+#[cfg(test)]
+mod tests
+{
+
+    #[test]
+    fn builder_compiles()
+    {
+        let t = crate::Tesseract::builder()
+            .assume_numeric_input()
+            .whitelist_str("abcdef")
+            .unwrap()
+            .build()
+            .unwrap();
+
+        assert!(true);
     }
 }

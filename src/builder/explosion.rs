@@ -4,7 +4,7 @@ use super::Builder;
 
 impl<Whitelist> Builder<((), Whitelist)>
 {
-    fn assume_numeric_input(self) -> Builder<(bool, Whitelist)>
+    pub fn assume_numeric_input(self) -> Builder<(bool, Whitelist)>
     {
         let Builder {
             fields: ((), whitelist),
@@ -18,7 +18,7 @@ impl<Whitelist> Builder<((), Whitelist)>
 
 impl<AssumeNumericInput> Builder<(AssumeNumericInput, ())>
 {
-    fn whitelist_str(
+    pub fn whitelist_str(
         self,
         whitelist: &str,
     ) -> Result<
@@ -37,7 +37,7 @@ impl<AssumeNumericInput> Builder<(AssumeNumericInput, ())>
         })
     }
 
-    fn whitelist_c_str(
+    pub fn whitelist_c_str(
         self,
         whitelist: &ffi::CStr,
     ) -> Builder<(AssumeNumericInput, borrow::Cow<'_, ffi::CStr>)>
@@ -54,7 +54,7 @@ impl<AssumeNumericInput> Builder<(AssumeNumericInput, ())>
 
 impl Builder<(bool, borrow::Cow<'_, ffi::CStr>)>
 {
-    fn build(self) -> Result<crate::Tesseract, crate::Error>
+    pub fn build(self) -> Result<crate::Tesseract, crate::Error>
     {
         let Builder {
             fields: (assume_numeric_input, whitelist),
@@ -66,7 +66,7 @@ impl Builder<(bool, borrow::Cow<'_, ffi::CStr>)>
 
 impl Builder<((), borrow::Cow<'_, ffi::CStr>)>
 {
-    fn build(self) -> Result<crate::Tesseract, crate::Error>
+    pub fn build(self) -> Result<crate::Tesseract, crate::Error>
     {
         let Builder {
             fields: (_, whitelist),
@@ -78,7 +78,7 @@ impl Builder<((), borrow::Cow<'_, ffi::CStr>)>
 
 impl Builder<(bool, ())>
 {
-    fn build(self) -> Result<crate::Tesseract, crate::Error>
+    pub fn build(self) -> Result<crate::Tesseract, crate::Error>
     {
         let Builder {
             fields: (assume_numeric_input, _),
@@ -90,7 +90,7 @@ impl Builder<(bool, ())>
 
 impl Builder<((), ())>
 {
-    fn build(self) -> Result<crate::Tesseract, crate::Error>
+    pub fn build(self) -> Result<crate::Tesseract, crate::Error>
     {
         let Builder { fields: (_, _) } = self;
 

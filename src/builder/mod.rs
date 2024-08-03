@@ -9,12 +9,12 @@ mod explosion;
 // [0] - assume_numeric_input
 // [1] - whitelist
 #[derive(Debug)]
-struct Builder<Fields = ((), ())>
+pub struct Builder<Fields = ((), ())>
 {
     fields: Fields,
 }
 
-fn build(
+pub fn build(
     assume_numeric_input: bool,
     whitelist: Option<borrow::Cow<'_, ffi::CStr>>, // TODO: Maybe figure something better
 ) -> Result<crate::Tesseract, crate::Error>
@@ -38,6 +38,14 @@ fn build(
     Ok(crate::Tesseract {
         base_api: thin_tess,
     })
+}
+
+impl ::std::default::Default for Builder<((), ())>
+{
+    fn default() -> Self
+    {
+        Builder { fields: ((), ()) }
+    }
 }
 
 mod constants

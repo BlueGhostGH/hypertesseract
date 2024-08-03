@@ -44,8 +44,6 @@ impl Tesseract
 #[derive(Debug)]
 pub(crate) enum Error
 {
-    Nul(ffi::NulError),
-
     SetVariable(error::SetVariable),
 }
 
@@ -54,8 +52,6 @@ impl ::std::fmt::Display for Error
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result
     {
         match self {
-            Error::Nul(nul_err) => write!(f, "{nul_err}"),
-
             Error::SetVariable(set_variable_err) => {
                 write!(
                     f,
@@ -71,18 +67,8 @@ impl ::std::error::Error for Error
     fn source(&self) -> Option<&(dyn ::std::error::Error + 'static)>
     {
         match self {
-            Error::Nul(nul_err) => Some(nul_err),
-
             Error::SetVariable(set_variable_err) => Some(set_variable_err),
         }
-    }
-}
-
-impl From<ffi::NulError> for Error
-{
-    fn from(nul_err: ffi::NulError) -> Self
-    {
-        Error::Nul(nul_err)
     }
 }
 

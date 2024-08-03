@@ -5,3 +5,7 @@ edition = "2021"
 
 [dependencies]
 tesseract-sys = "0.6.1"
+
+# For some reason you need OpenSSL for tesseract to link properly on Windows...
+[target.'cfg(windows)'.dependencies]
+openssl = "0.10.66"

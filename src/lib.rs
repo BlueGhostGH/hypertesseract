@@ -52,6 +52,10 @@ impl From<thin::Error> for Error
 #[cfg(test)]
 mod tests
 {
+    // For some reason you need OpenSSL for tesseract to link properly on Windows...
+    #[cfg(target_os = "windows")]
+    #[allow(unused_imports)]
+    use openssl;
 
     #[test]
     fn builder_compiles()

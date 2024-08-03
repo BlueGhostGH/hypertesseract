@@ -5,7 +5,7 @@ pub(crate) enum SetVariable
 {
     UnknownVariable
     {
-        name: ffi::CString
+        name: &'static ffi::CStr
     },
 }
 
@@ -15,9 +15,7 @@ impl ::std::fmt::Display for SetVariable
     {
         match self {
             Self::UnknownVariable { name } => {
-                // SAFETY: This `&CString` was formed from a `&str`. If this
-                // fails, that means the arguments provided to `set_variable`
-                // broke the `&str` UTF-8 validity contract.
+                // SAFETY: This `&CStr` was formed from a valid `&'static str`.
                 let name = unsafe { name.to_str().unwrap_unchecked() };
 
                 write!(f, "unknown variable \"{name}\"")

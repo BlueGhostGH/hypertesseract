@@ -1,6 +1,7 @@
 use std::ffi;
 
 mod error;
+pub(crate) mod variables;
 
 #[derive(Debug)]
 pub(crate) struct Tesseract
@@ -10,20 +11,24 @@ pub(crate) struct Tesseract
 
 impl Tesseract
 {
+    pub(crate) fn create() -> Self
+    {
+        Tesseract {
+            base_api: unsafe { tesseract_sys::TessBaseAPICreate() },
+        }
+    }
+
     pub(crate) fn set_variable(
         &mut self,
-        name: &str,
-        value: &str,
+        name: &'static ffi::CStr,
+        value: &ffi::CStr,
     ) -> Result<(), Error>
     {
-        let c_name = ffi::CString::new(name)?;
-        let c_value = ffi::CString::new(value)?;
-
         let ret = unsafe {
             tesseract_sys::TessBaseAPISetVariable(
                 self.base_api,
-                c_name.as_ptr(),
-                c_value.as_ptr(),
+                name.as_ptr(),
+                value.as_ptr(),
             )
         };
 
@@ -31,7 +36,7 @@ impl Tesseract
         if ret != 0 {
             Ok(())
         } else {
-            Err(error::SetVariable::UnknownVariable { name: c_name })?
+            Err(error::SetVariable::UnknownVariable { name })?
         }
     }
 }

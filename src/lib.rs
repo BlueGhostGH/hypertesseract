@@ -1,3 +1,4 @@
+mod builder;
 mod thin;
 
 #[derive(Debug)]

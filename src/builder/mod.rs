@@ -40,7 +40,7 @@ pub fn build(
     }
 
     Ok(crate::Tesseract {
-        base_api: thin_tess,
+        _base_api: thin_tess,
     })
 }
 

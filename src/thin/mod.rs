@@ -64,7 +64,7 @@ impl Tesseract
 }
 
 #[derive(Debug)]
-pub(crate) enum Error
+pub enum Error
 {
     Init(error::init::Error),
     SetVariable(error::set_variable::Error),

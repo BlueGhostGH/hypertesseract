@@ -3,7 +3,7 @@ pub(super) mod set_variable
     use std::ffi;
 
     #[derive(Debug)]
-    pub(crate) enum Error
+    pub enum Error
     {
         UnknownVariable
         {
@@ -40,7 +40,7 @@ pub(super) mod set_variable
 pub(super) mod init
 {
     #[derive(Debug)]
-    pub(crate) enum Error
+    pub enum Error
     {
         // TODO: Make more in depth/detailed
         FailedToInit,

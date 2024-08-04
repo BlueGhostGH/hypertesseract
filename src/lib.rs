@@ -6,7 +6,7 @@ pub use builder::language::Language;
 #[derive(Debug)]
 pub struct Tesseract
 {
-    base_api: thin::Tesseract,
+    _base_api: thin::Tesseract,
 }
 
 impl Tesseract
@@ -17,8 +17,10 @@ impl Tesseract
     }
 }
 
+pub type Result<T> = ::std::result::Result<T, Error>;
+
 #[derive(Debug)]
-pub(crate) enum Error
+pub enum Error
 {
     Thin(thin::Error),
 }
@@ -62,7 +64,7 @@ mod tests
     #[test]
     fn builder_compiles()
     {
-        let t = crate::Tesseract::builder()
+        let _t = crate::Tesseract::builder()
             .assume_numeric_input()
             .whitelist_str("abcdef")
             .unwrap()

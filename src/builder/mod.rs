@@ -36,8 +36,7 @@ pub fn build(
     )?;
 
     if let Some(whitelist) = whitelist {
-        thin_tess
-            .set_variable(thin::variables::ASSUME_NUMERIC_INPUT, &whitelist)?
+        thin_tess.set_variable(thin::variables::WHITELIST, &whitelist)?
     }
 
     Ok(crate::Tesseract {

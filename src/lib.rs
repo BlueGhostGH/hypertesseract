@@ -1,6 +1,8 @@
 mod builder;
 mod thin;
 
+pub use builder::language::Language;
+
 #[derive(Debug)]
 pub struct Tesseract
 {
@@ -9,7 +11,7 @@ pub struct Tesseract
 
 impl Tesseract
 {
-    pub fn builder() -> builder::Builder<((), ())>
+    pub fn builder() -> builder::Builder<((), (), ())>
     {
         builder::Builder::default()
     }
@@ -64,6 +66,7 @@ mod tests
             .assume_numeric_input()
             .whitelist_str("abcdef")
             .unwrap()
+            .language(crate::Language::English)
             .build()
             .unwrap();
 

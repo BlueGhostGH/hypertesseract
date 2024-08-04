@@ -1,35 +1,70 @@
-use std::ffi;
-
-#[derive(Debug)]
-pub(crate) enum SetVariable
+pub(super) mod set_variable
 {
-    UnknownVariable
-    {
-        name: &'static ffi::CStr
-    },
-}
+    use std::ffi;
 
-impl ::std::fmt::Display for SetVariable
-{
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result
+    #[derive(Debug)]
+    pub(crate) enum Error
     {
-        match self {
-            Self::UnknownVariable { name } => {
-                // SAFETY: This `&CStr` was formed from a valid `&'static str`.
-                let name = unsafe { name.to_str().unwrap_unchecked() };
+        UnknownVariable
+        {
+            name: &'static ffi::CStr
+        },
+    }
 
-                write!(f, "unknown variable \"{name}\"")
+    impl ::std::fmt::Display for Error
+    {
+        fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result
+        {
+            match self {
+                Self::UnknownVariable { name } => {
+                    // SAFETY: This `&CStr` was formed from a valid `&'static str`.
+                    let name = unsafe { name.to_str().unwrap_unchecked() };
+
+                    write!(f, "unknown variable \"{name}\"")
+                }
+            }
+        }
+    }
+
+    impl ::std::error::Error for Error
+    {
+        fn source(&self) -> Option<&(dyn std::error::Error + 'static)>
+        {
+            match self {
+                Self::UnknownVariable { .. } => None,
             }
         }
     }
 }
 
-impl ::std::error::Error for SetVariable
+pub(super) mod init
 {
-    fn source(&self) -> Option<&(dyn std::error::Error + 'static)>
+    #[derive(Debug)]
+    pub(crate) enum Error
     {
-        match self {
-            Self::UnknownVariable { .. } => None,
+        // TODO: Make more in depth/detailed
+        FailedToInit,
+    }
+
+    impl ::std::fmt::Display for Error
+    {
+        fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result
+        {
+            match self {
+                Self::FailedToInit => {
+                    write!(f, "failed to initialise tesseract")
+                }
+            }
+        }
+    }
+
+    impl ::std::error::Error for Error
+    {
+        fn source(&self) -> Option<&(dyn std::error::Error + 'static)>
+        {
+            match self {
+                Self::FailedToInit => None,
+            }
         }
     }
 }

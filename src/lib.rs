@@ -2,6 +2,7 @@ mod builder;
 mod thin;
 
 pub use builder::language::Language;
+pub use builder::page_seg_mode::PageSegMode;
 
 #[derive(Debug)]
 pub struct Tesseract
@@ -11,7 +12,7 @@ pub struct Tesseract
 
 impl Tesseract
 {
-    pub fn builder() -> builder::Builder<((), (), ())>
+    pub fn builder() -> builder::Builder<((), (), (), ())>
     {
         builder::Builder::default()
     }
@@ -69,6 +70,7 @@ mod tests
             .whitelist_str("abcdef")
             .unwrap()
             .language(crate::Language::English)
+            .page_seg_mode(crate::PageSegMode::SingleLine)
             .build()
             .unwrap();
 

@@ -61,6 +61,14 @@ impl Tesseract
             Err(error::set_variable::Error::UnknownVariable { name })?
         }
     }
+
+    pub(crate) fn set_page_seg_mode(
+        &mut self,
+        mode: tesseract_sys::TessPageSegMode,
+    )
+    {
+        unsafe { tesseract_sys::TessBaseAPISetPageSegMode(self.base_api, mode) }
+    }
 }
 
 #[derive(Debug)]

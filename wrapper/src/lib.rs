@@ -41,33 +41,3 @@ impl Tesseract
         Ok(())
     }
 }
-
-#[cfg(test)]
-mod tests
-{
-    #[test]
-    fn builder_compiles()
-    {
-        let mut t = crate::Tesseract::builder()
-            .assume_numeric_input()
-            .whitelist_str("abcdef")
-            .unwrap()
-            .language(crate::Language::English)
-            .page_seg_mode(crate::PageSegMode::SingleLine)
-            .build()
-            .unwrap();
-
-        const WIDTH: usize = 128;
-        const HEIGHT: usize = 128;
-        let buffer = vec![255; WIDTH * HEIGHT * 4];
-
-        t.load_image(crate::Image::RGBA8 {
-            buffer: &buffer,
-            width: WIDTH as u32,
-            height: HEIGHT as u32,
-        })
-        .unwrap();
-
-        assert!(true);
-    }
-}

@@ -852,6 +852,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "tester"
+version = "0.1.0"
+dependencies = [
+ "image",
+ "tesseract",
+]
+
+[[package]]
 name = "thin"
 version = "0.1.0"
 dependencies = [

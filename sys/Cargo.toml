@@ -1,0 +1,12 @@
+[package]
+name = "sys"
+version = "0.1.0"
+edition = "2021"
+
+# I have no idea why this is needed..
+[target.'cfg(windows)'.dependencies]
+openssl-sys = "0.9"
+[target.'cfg(windows)'.build-dependencies]
+vcpkg = "0.2.15"
+[target.'cfg(any(target_os="macos", target_os="linux", target_os="freebsd"))'.build-dependencies]
+pkg-config = "0.3.30"

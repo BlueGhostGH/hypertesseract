@@ -1,7 +1,15 @@
 mod builder;
 
+mod error;
+mod image;
+
 pub use builder::language::Language;
 pub use builder::page_seg_mode::PageSegMode;
+
+pub use error::Error;
+pub type Result<T> = ::std::result::Result<T, Error>;
+
+pub use image::Image;
 
 #[derive(Debug)]
 pub struct Tesseract
@@ -15,41 +23,22 @@ impl Tesseract
     {
         builder::Builder::default()
     }
-}
 
-pub type Result<T> = ::std::result::Result<T, Error>;
-
-#[derive(Debug)]
-pub enum Error
-{
-    Thin(thin::Error),
-}
-
-impl ::std::fmt::Display for Error
-{
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result
+    pub fn load_image<'buf, I>(&mut self, image: I) -> Result<()>
+    where
+        I: Into<image::Image<'buf>>,
     {
-        match self {
-            Error::Thin(thin_err) => write!(f, "{thin_err}"),
-        }
-    }
-}
+        let image = image.into();
 
-impl ::std::error::Error for Error
-{
-    fn source(&self) -> Option<&(dyn ::std::error::Error + 'static)>
-    {
-        match self {
-            Error::Thin(thin_err) => Some(thin_err),
-        }
-    }
-}
+        let mut pix = thin::leptonica::Pix::create(
+            image.width().try_into()?,
+            image.height().try_into()?,
+            image.depth().into(),
+        );
 
-impl From<thin::Error> for Error
-{
-    fn from(thin_err: thin::Error) -> Self
-    {
-        Error::Thin(thin_err)
+        pix.set_data(image.buffer())?;
+
+        Ok(())
     }
 }
 
@@ -59,7 +48,7 @@ mod tests
     #[test]
     fn builder_compiles()
     {
-        let _t = crate::Tesseract::builder()
+        let mut t = crate::Tesseract::builder()
             .assume_numeric_input()
             .whitelist_str("abcdef")
             .unwrap()
@@ -67,6 +56,17 @@ mod tests
             .page_seg_mode(crate::PageSegMode::SingleLine)
             .build()
             .unwrap();
+
+        const WIDTH: usize = 128;
+        const HEIGHT: usize = 128;
+        let buffer = vec![255; WIDTH * HEIGHT * 4];
+
+        t.load_image(crate::Image::RGBA8 {
+            buffer: &buffer,
+            width: WIDTH as u32,
+            height: HEIGHT as u32,
+        })
+        .unwrap();
 
         assert!(true);
     }

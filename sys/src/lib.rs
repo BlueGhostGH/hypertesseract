@@ -7,6 +7,8 @@
 #[allow(unused_imports)]
 use openssl_sys;
 
+pub mod leptonica;
+
 // line 76 - baseapi.h
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

@@ -1,7 +1,12 @@
 use std::{ffi, ptr};
 
+pub mod leptonica;
+
 mod error;
 pub mod variables;
+
+pub use error::Error;
+type Result<T> = ::std::result::Result<T, Error>;
 
 #[derive(Debug)]
 pub struct Tesseract
@@ -18,10 +23,7 @@ impl Tesseract
         }
     }
 
-    pub fn init(
-        &mut self,
-        language: Option<&'static ffi::CStr>,
-    ) -> Result<(), Error>
+    pub fn init(&mut self, language: Option<&'static ffi::CStr>) -> Result<()>
     {
         let ret = unsafe {
             sys::TessBaseAPIInit3(
@@ -44,7 +46,7 @@ impl Tesseract
         &mut self,
         name: &'static ffi::CStr,
         value: &ffi::CStr,
-    ) -> Result<(), Error>
+    ) -> Result<()>
     {
         let ret = unsafe {
             sys::TessBaseAPISetVariable(
@@ -65,57 +67,5 @@ impl Tesseract
     pub fn set_page_seg_mode(&mut self, mode: sys::TessPageSegMode)
     {
         unsafe { sys::TessBaseAPISetPageSegMode(self.base_api, mode) }
-    }
-}
-
-#[derive(Debug)]
-pub enum Error
-{
-    Init(error::init::Error),
-    SetVariable(error::set_variable::Error),
-}
-
-impl ::std::fmt::Display for Error
-{
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result
-    {
-        match self {
-            Error::Init(init_err) => {
-                write!(f, "error while calling init: {init_err}")
-            }
-            Error::SetVariable(set_variable_err) => {
-                write!(
-                    f,
-                    "error while calling set_variable: {set_variable_err}"
-                )
-            }
-        }
-    }
-}
-
-impl ::std::error::Error for Error
-{
-    fn source(&self) -> Option<&(dyn ::std::error::Error + 'static)>
-    {
-        match self {
-            Error::Init(init_err) => Some(init_err),
-            Error::SetVariable(set_variable_err) => Some(set_variable_err),
-        }
-    }
-}
-
-impl From<error::init::Error> for Error
-{
-    fn from(init_err: error::init::Error) -> Self
-    {
-        Error::Init(init_err)
-    }
-}
-
-impl From<error::set_variable::Error> for Error
-{
-    fn from(set_variable_err: error::set_variable::Error) -> Self
-    {
-        Error::SetVariable(set_variable_err)
     }
 }

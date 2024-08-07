@@ -1,3 +1,73 @@
+use crate::leptonica;
+
+#[derive(Debug)]
+pub enum Error
+{
+    Init(init::Error),
+    SetVariable(set_variable::Error),
+
+    Leptonica(leptonica::Error),
+}
+
+impl ::std::fmt::Display for Error
+{
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result
+    {
+        match self {
+            Error::Init(init_err) => {
+                write!(f, "error while calling init: {init_err}")
+            }
+            Error::SetVariable(set_variable_err) => {
+                write!(
+                    f,
+                    "error while calling set_variable: {set_variable_err}"
+                )
+            }
+
+            Error::Leptonica(leptonica_err) => {
+                write!(f, "{leptonica_err}")
+            }
+        }
+    }
+}
+
+impl ::std::error::Error for Error
+{
+    fn source(&self) -> Option<&(dyn ::std::error::Error + 'static)>
+    {
+        match self {
+            Error::Init(init_err) => Some(init_err),
+            Error::SetVariable(set_variable_err) => Some(set_variable_err),
+
+            Error::Leptonica(leptonica_err) => Some(leptonica_err),
+        }
+    }
+}
+
+impl From<init::Error> for Error
+{
+    fn from(init_err: init::Error) -> Self
+    {
+        Error::Init(init_err)
+    }
+}
+
+impl From<set_variable::Error> for Error
+{
+    fn from(set_variable_err: set_variable::Error) -> Self
+    {
+        Error::SetVariable(set_variable_err)
+    }
+}
+
+impl From<leptonica::Error> for Error
+{
+    fn from(leptonica_err: leptonica::Error) -> Self
+    {
+        Error::Leptonica(leptonica_err)
+    }
+}
+
 pub(super) mod set_variable
 {
     use std::ffi;

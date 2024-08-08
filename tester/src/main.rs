@@ -16,9 +16,7 @@ fn main() -> Result<(), Box<dyn ::std::error::Error>>
         .language(Language::English)
         .page_seg_mode(PageSegMode::SingleLine)
         .build()?
-        .load_image(&image)?
-        .recognize()?
-        .get_text()?;
+        .recognize_text_cloned(&image)?;
 
     // We need to perform some additional operations
     // due to the exotic font
@@ -27,8 +25,8 @@ fn main() -> Result<(), Box<dyn ::std::error::Error>>
 
     let score: u32 = text.trim().parse()?;
 
-    assert_eq!(score, 9983744);
     println!("{score}");
+    assert_eq!(score, 9983744);
 
     Ok(())
 }

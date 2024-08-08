@@ -24,38 +24,26 @@ impl Tesseract
         builder::Builder::default()
     }
 
-    pub fn load_image<'buf, I>(&mut self, image: I) -> Result<&mut Self>
+    pub fn recognize_text_cloned<'buf, I>(mut self, image: I) -> Result<String>
     where
-        I: Into<image::Image<'buf>>,
+        I: Into<Image<'buf>>,
     {
-        let image = image.into();
+        // `rust-analyzer` refuses to give inlay hints..
+        let image: Image<'buf> = image.into();
 
         let mut pix = thin::leptonica::Pix::create(
             image.width().try_into()?,
             image.height().try_into()?,
             image.depth().into(),
         );
-
         pix.set_data(image.buffer())?;
-
         self.base_api.set_image(&mut pix);
 
-        // TODO: Store the pix somewhere
-        ::std::mem::forget(pix);
-
-        Ok(self)
-    }
-
-    pub fn recognize(&mut self) -> Result<&mut Self>
-    {
         self.base_api.recognize()?;
 
-        Ok(self)
-    }
+        let text = self.base_api.get_utf8_text()?;
+        let text = text.as_ref().to_str()?.to_owned();
 
-    // TODO: Figure out correct lifetime
-    pub fn get_text(&mut self) -> Result<String>
-    {
-        Ok(self.base_api.get_utf8_text()?.as_ref().to_str()?.to_owned())
+        Ok(text)
     }
 }

@@ -57,4 +57,7 @@ extern "C" {
         handle: *mut TessBaseAPI,
         mode: TessPageSegMode,
     );
+
+    // line 188 - capi.h
+    pub fn TessBaseAPIDelete(handle: *mut TessBaseAPI);
 }

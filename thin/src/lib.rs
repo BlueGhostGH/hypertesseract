@@ -11,23 +11,28 @@ type Result<T> = ::std::result::Result<T, Error>;
 #[derive(Debug)]
 pub struct Tesseract
 {
-    base_api: *mut sys::TessBaseAPI,
+    base_api: ptr::NonNull<sys::TessBaseAPI>,
 }
 
 impl Tesseract
 {
     pub fn create() -> Self
     {
-        Tesseract {
-            base_api: unsafe { sys::TessBaseAPICreate() },
-        }
+        let base_api = unsafe {
+            let ptr = sys::TessBaseAPICreate();
+
+            // Let us pray allocation never ever fails
+            ptr::NonNull::new_unchecked(ptr)
+        };
+
+        Tesseract { base_api }
     }
 
     pub fn init(&mut self, language: Option<&'static ffi::CStr>) -> Result<()>
     {
         let ret = unsafe {
             sys::TessBaseAPIInit3(
-                self.base_api,
+                self.base_api.as_ptr(),
                 ptr::null(),
                 language.map(ffi::CStr::as_ptr).unwrap_or_else(ptr::null),
             )
@@ -50,7 +55,7 @@ impl Tesseract
     {
         let ret = unsafe {
             sys::TessBaseAPISetVariable(
-                self.base_api,
+                self.base_api.as_ptr(),
                 name.as_ptr(),
                 value.as_ptr(),
             )
@@ -66,6 +71,16 @@ impl Tesseract
 
     pub fn set_page_seg_mode(&mut self, mode: sys::TessPageSegMode)
     {
-        unsafe { sys::TessBaseAPISetPageSegMode(self.base_api, mode) }
+        unsafe { sys::TessBaseAPISetPageSegMode(self.base_api.as_ptr(), mode) }
+    }
+}
+
+impl Drop for Tesseract
+{
+    fn drop(&mut self)
+    {
+        unsafe {
+            sys::TessBaseAPIDelete(self.base_api.as_ptr());
+        }
     }
 }

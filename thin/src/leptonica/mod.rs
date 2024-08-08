@@ -1,4 +1,4 @@
-use std::num;
+use std::ptr;
 
 mod error;
 
@@ -8,23 +8,28 @@ type Result<T> = ::std::result::Result<T, Error>;
 #[derive(Debug)]
 pub struct Pix
 {
-    pix: *mut sys::leptonica::PIX,
+    pix: ptr::NonNull<sys::leptonica::PIX>,
 }
 
 impl Pix
 {
     pub fn create(width: i32, height: i32, depth: i32) -> Self
     {
-        Pix {
-            pix: unsafe { sys::leptonica::pixCreate(width, height, depth) },
-        }
+        let pix = unsafe {
+            let ptr = sys::leptonica::pixCreate(width, height, depth);
+
+            // Let us pray allocation never ever fails
+            ptr::NonNull::new_unchecked(ptr)
+        };
+
+        Pix { pix }
     }
 
     pub fn set_data(&mut self, data: &[u8]) -> Result<()>
     {
         let ret = unsafe {
             sys::leptonica::pixSetData(
-                self.pix,
+                self.pix.as_ptr(),
                 data.as_ptr().cast_mut().cast(),
             )
         };
@@ -36,5 +41,13 @@ impl Pix
         } else {
             Err(error::set_data::Error::FailedToSetData)?
         }
+    }
+}
+
+impl Drop for Pix
+{
+    fn drop(&mut self)
+    {
+        unsafe { sys::leptonica::pixDestroy(&mut self.pix.as_ptr()) }
     }
 }

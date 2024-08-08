@@ -76,6 +76,14 @@ extern "C" {
         monitor: *mut ETEXT_DESC,
     ) -> ::std::os::raw::c_int;
 
+    // line 323 - capi.h
+    pub fn TessBaseAPIGetUTF8Text(
+        handle: *mut TessBaseAPI,
+    ) -> *mut ::std::os::raw::c_char;
+
+    // line 149 - capi.h
+    pub fn TessDeleteText(text: *const ::std::os::raw::c_char);
+
     // line 188 - capi.h
     pub fn TessBaseAPIDelete(handle: *mut TessBaseAPI);
 }

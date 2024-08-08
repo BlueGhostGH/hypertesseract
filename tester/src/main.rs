@@ -1,21 +1,32 @@
+#![feature(string_remove_matches)]
+
+const WHITELIST: &'static str = "0123456789'/";
+
 fn main() -> Result<(), Box<dyn ::std::error::Error>>
 {
-    const WIDTH: usize = 128;
-    const HEIGHT: usize = 128;
-    let buffer = vec![255; WIDTH * HEIGHT * 4];
+    let image = image::ImageReader::open("../test.bmp")?
+        .decode()?
+        .into_rgba8();
 
-    let _t = tesseract::Tesseract::builder()
+    let text = tesseract::Tesseract::builder()
         .assume_numeric_input()
-        .whitelist_str("abcdef")?
+        .whitelist_str(WHITELIST)?
         .language(tesseract::Language::English)
         .page_seg_mode(tesseract::PageSegMode::SingleLine)
         .build()?
-        .load_image(tesseract::Image::RGBA8 {
-            buffer: &buffer,
-            width: WIDTH as u32,
-            height: HEIGHT as u32,
-        })?
-        .recognize()?;
+        .load_image(&image)?
+        .recognize()?
+        .get_text()?;
+
+    // We need to perform some additional operations
+    // due to the exotic font
+    let mut text = text.replace('/', "7");
+    text.remove_matches('\'');
+
+    let score: u32 = text.trim().parse()?;
+
+    assert_eq!(score, 9983744);
+    println!("{score}");
 
     Ok(())
 }

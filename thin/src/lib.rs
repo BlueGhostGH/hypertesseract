@@ -3,10 +3,13 @@ use std::{ffi, ptr};
 pub mod leptonica;
 
 mod error;
+mod text;
 pub mod variables;
 
 pub use error::Error;
 type Result<T> = ::std::result::Result<T, Error>;
+
+pub use text::Text;
 
 #[derive(Debug)]
 pub struct Tesseract
@@ -93,6 +96,19 @@ impl Tesseract
             Ok(())
         } else {
             Err(error::recognize::Error::FailedToRecognize)?
+        }
+    }
+
+    pub fn get_utf8_text(&mut self) -> Result<Text>
+    {
+        let text =
+            unsafe { sys::TessBaseAPIGetUTF8Text(self.base_api.as_ptr()) };
+
+        // `nullptr` can be returned if something goes wrong
+        if !text.is_null() {
+            Ok(unsafe { Text::new_unchecked(text) })
+        } else {
+            Err(error::get_utf8_text::Error::FailedToGetUtf8Text)?
         }
     }
 }

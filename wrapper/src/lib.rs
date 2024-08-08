@@ -40,6 +40,9 @@ impl Tesseract
 
         self.base_api.set_image(&mut pix);
 
+        // TODO: Store the pix somewhere
+        ::std::mem::forget(pix);
+
         Ok(self)
     }
 
@@ -48,5 +51,11 @@ impl Tesseract
         self.base_api.recognize()?;
 
         Ok(self)
+    }
+
+    // TODO: Figure out correct lifetime
+    pub fn get_text(&mut self) -> Result<String>
+    {
+        Ok(self.base_api.get_utf8_text()?.as_ref().to_str()?.to_owned())
     }
 }

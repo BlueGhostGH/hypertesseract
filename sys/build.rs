@@ -25,8 +25,8 @@ fn main()
         "cargo::rustc-link-search=native={:?}",
         tesseract.link_paths[0]
     );
-    println!("cargo::rustc-link-lib=lept");
-    println!("cargo::rustc-link-lib=tesseract");
+    println!("cargo::rustc-link-lib={}", leptonica.libs[0]);
+    println!("cargo::rustc-link-lis={}", tesseract.libs[0]);
 }
 
 #[cfg(not(any(target_os = "windows", target_os = "linux")))]

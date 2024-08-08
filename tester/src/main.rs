@@ -1,5 +1,7 @@
 #![feature(string_remove_matches)]
 
+use hypertesseract::{Language, PageSegMode, Tesseract};
+
 const WHITELIST: &'static str = "0123456789'/";
 
 fn main() -> Result<(), Box<dyn ::std::error::Error>>
@@ -8,11 +10,11 @@ fn main() -> Result<(), Box<dyn ::std::error::Error>>
         .decode()?
         .into_rgba8();
 
-    let text = tesseract::Tesseract::builder()
+    let text = Tesseract::builder()
         .assume_numeric_input()
         .whitelist_str(WHITELIST)?
-        .language(tesseract::Language::English)
-        .page_seg_mode(tesseract::PageSegMode::SingleLine)
+        .language(Language::English)
+        .page_seg_mode(PageSegMode::SingleLine)
         .build()?
         .load_image(&image)?
         .recognize()?

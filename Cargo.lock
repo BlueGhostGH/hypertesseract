@@ -292,6 +292,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
 
 [[package]]
+name = "hypertesseract"
+version = "0.1.0"
+dependencies = [
+ "image",
+ "sys",
+ "thin",
+]
+
+[[package]]
 name = "image"
 version = "0.25.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -843,20 +852,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "61c41af27dd6d1e27b1b16b489db798443478cef1f06a660c96db617ba5de3b1"
 
 [[package]]
-name = "tesseract"
-version = "0.1.0"
-dependencies = [
- "image",
- "sys",
- "thin",
-]
-
-[[package]]
 name = "tester"
 version = "0.1.0"
 dependencies = [
+ "hypertesseract",
  "image",
- "tesseract",
 ]
 
 [[package]]

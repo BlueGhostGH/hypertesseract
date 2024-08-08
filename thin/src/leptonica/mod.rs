@@ -8,7 +8,7 @@ type Result<T> = ::std::result::Result<T, Error>;
 #[derive(Debug)]
 pub struct Pix
 {
-    pix: ptr::NonNull<sys::leptonica::PIX>,
+    pub(crate) pix: ptr::NonNull<sys::leptonica::PIX>,
 }
 
 impl Pix

@@ -16,6 +16,12 @@ pub struct TessBaseAPI
 {
     _unused: [u8; 0],
 }
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct ETEXT_DESC
+{
+    _unused: [u8; 0],
+}
 
 // pub const TessPageSegMode_PSM_OSD_ONLY: TessPageSegMode = 0;
 // pub const TessPageSegMode_PSM_AUTO_OSD: TessPageSegMode = 1;
@@ -57,6 +63,18 @@ extern "C" {
         handle: *mut TessBaseAPI,
         mode: TessPageSegMode,
     );
+
+    // line 268 - capi.h
+    pub fn TessBaseAPISetImage2(
+        handle: *mut TessBaseAPI,
+        pix: *mut leptonica::Pix,
+    );
+
+    // line 307 - capi.h
+    pub fn TessBaseAPIRecognize(
+        handle: *mut TessBaseAPI,
+        monitor: *mut ETEXT_DESC,
+    ) -> ::std::os::raw::c_int;
 
     // line 188 - capi.h
     pub fn TessBaseAPIDelete(handle: *mut TessBaseAPI);

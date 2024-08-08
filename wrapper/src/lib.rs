@@ -14,7 +14,7 @@ pub use image::Image;
 #[derive(Debug)]
 pub struct Tesseract
 {
-    _base_api: thin::Tesseract,
+    base_api: thin::Tesseract,
 }
 
 impl Tesseract
@@ -24,7 +24,7 @@ impl Tesseract
         builder::Builder::default()
     }
 
-    pub fn load_image<'buf, I>(&mut self, image: I) -> Result<()>
+    pub fn load_image<'buf, I>(&mut self, image: I) -> Result<&mut Self>
     where
         I: Into<image::Image<'buf>>,
     {
@@ -38,6 +38,15 @@ impl Tesseract
 
         pix.set_data(image.buffer())?;
 
-        Ok(())
+        self.base_api.set_image(&mut pix);
+
+        Ok(self)
+    }
+
+    pub fn recognize(&mut self) -> Result<&mut Self>
+    {
+        self.base_api.recognize()?;
+
+        Ok(self)
     }
 }

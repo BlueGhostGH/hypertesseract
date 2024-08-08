@@ -73,6 +73,28 @@ impl Tesseract
     {
         unsafe { sys::TessBaseAPISetPageSegMode(self.base_api.as_ptr(), mode) }
     }
+
+    pub fn set_image(&mut self, pix: &mut leptonica::Pix)
+    {
+        unsafe {
+            sys::TessBaseAPISetImage2(self.base_api.as_ptr(), pix.pix.as_ptr())
+        }
+    }
+
+    pub fn recognize(&mut self) -> Result<()>
+    {
+        let ret = unsafe {
+            sys::TessBaseAPIRecognize(self.base_api.as_ptr(), ptr::null_mut())
+        };
+
+        // `0` is returned if recognition succeeds
+        // No further reason for failure is provided
+        if ret == 0 {
+            Ok(())
+        } else {
+            Err(error::recognize::Error::FailedToRecognize)?
+        }
+    }
 }
 
 impl Drop for Tesseract

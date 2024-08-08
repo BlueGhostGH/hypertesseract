@@ -1,5 +1,5 @@
 [package]
-name = "tesseract"
+name = "hypertesseract"
 version = "0.1.0"
 edition = "2021"
 

@@ -48,6 +48,9 @@ impl Drop for Pix
 {
     fn drop(&mut self)
     {
-        unsafe { sys::leptonica::pixDestroy(&mut self.pix.as_ptr()) }
+        unsafe {
+            sys::leptonica::pixSetData(self.pix.as_ptr(), ptr::null_mut());
+            sys::leptonica::pixDestroy(&mut self.pix.as_ptr())
+        }
     }
 }

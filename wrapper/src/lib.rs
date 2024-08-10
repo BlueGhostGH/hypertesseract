@@ -24,7 +24,18 @@ impl Tesseract
         builder::Builder::default()
     }
 
-    pub fn recognize_text_cloned<'buf, I>(mut self, image: I) -> Result<String>
+    pub fn recognize_text_cloned<'buf, I>(self, image: I) -> Result<String>
+    where
+        I: Into<Image<'buf>>,
+    {
+        self.recognize_text_cloned_with_conf(image)
+            .map(|(text, _)| text)
+    }
+
+    pub fn recognize_text_cloned_with_conf<'buf, I>(
+        mut self,
+        image: I,
+    ) -> Result<(String, i32)>
     where
         I: Into<Image<'buf>>,
     {
@@ -44,6 +55,8 @@ impl Tesseract
         let text = self.base_api.get_utf8_text()?;
         let text = text.as_ref().to_str()?.to_owned();
 
-        Ok(text)
+        let conf = self.base_api.mean_text_conf();
+
+        Ok((text, conf))
     }
 }

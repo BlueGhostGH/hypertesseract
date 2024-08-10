@@ -99,6 +99,11 @@ impl Tesseract
         }
     }
 
+    pub fn mean_text_conf(&mut self) -> i32
+    {
+        unsafe { sys::TessBaseAPIMeanTextConf(self.base_api.as_ptr()) }
+    }
+
     pub fn get_utf8_text(&mut self) -> Result<Text>
     {
         let text =

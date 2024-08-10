@@ -76,6 +76,11 @@ extern "C" {
         monitor: *mut ETEXT_DESC,
     ) -> ::std::os::raw::c_int;
 
+    // line 336 - capi.h
+    pub fn TessBaseAPIMeanTextConf(
+        handle: *mut TessBaseAPI,
+    ) -> ::std::os::raw::c_int;
+
     // line 323 - capi.h
     pub fn TessBaseAPIGetUTF8Text(
         handle: *mut TessBaseAPI,

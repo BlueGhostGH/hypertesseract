@@ -35,7 +35,7 @@ impl Tesseract
     pub fn recognize_text_cloned_with_conf<'buf, I>(
         mut self,
         image: I,
-    ) -> Result<(String, i32)>
+    ) -> Result<(String, u32)>
     where
         I: Into<Image<'buf>>,
     {
@@ -55,7 +55,8 @@ impl Tesseract
         let text = self.base_api.get_utf8_text()?;
         let text = text.as_ref().to_str()?.to_owned();
 
-        let conf = self.base_api.mean_text_conf();
+        // Confidence should always be non-negative
+        let conf = self.base_api.mean_text_conf() as u32;
 
         Ok((text, conf))
     }
